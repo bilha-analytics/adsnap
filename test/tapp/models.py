@@ -1,6 +1,8 @@
-from tapp import db, login_manager , app 
+from tapp import db, login_manager 
 from datetime import datetime 
 from flask_login import UserMixin 
+
+from flask import current_app as app
 
 from itsdangerous import TimedJSONWebSignatureSerializer as TSerializer 
 

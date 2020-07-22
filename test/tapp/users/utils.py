@@ -2,8 +2,10 @@ import os
 import secrets 
 from PIL import Image
 from flask import url_for
-from tapp import app, mail 
+from tapp import mail 
 from flask_mail import Message 
+
+from flask import current_app as app
 
 ## save uploaded file. use random hex as filename 
 # resize using PIL

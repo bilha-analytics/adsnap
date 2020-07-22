@@ -1,6 +1,8 @@
-from tapp import app, db, posts 
+from tapp import create_app, db, posts 
 
 from tapp.models import User, Post
+
+app = create_app()
 
 if __name__ == "__main__": 
 
@@ -27,16 +29,16 @@ if __name__ == "__main__":
     # print(f'---- POSTS ADDED for {user1.id}: {user1.uname}---- ') 
     # print( Post.query.all() )
 
-    print('\n---- SUMMARY @ DB ENTRIES :: User----\n') 
-    for u in User.query.all():
-        print( f"{repr(u)} ")
-        print("\t--- posts")
-        for p in u.posts:
-            print( f"\t{repr(p)}") 
+    # print('\n---- SUMMARY @ DB ENTRIES :: User----\n') 
+    # for u in User.query.all():
+    #     print( f"{repr(u)} ")
+    #     print("\t--- posts")
+    #     for p in u.posts:
+    #         print( f"\t{repr(p)}") 
 
-    print('\n---- SUMMARY @ DB ENTRIES :: Post----\n') 
-    for i, p in enumerate(Post.query.all() ):
-        print( f"{repr(p)} by::{repr( p.author) } ")
+    # print('\n---- SUMMARY @ DB ENTRIES :: Post----\n') 
+    # for i, p in enumerate(Post.query.all() ):
+    #     print( f"{repr(p)} by::{repr( p.author) } ")
 
 
     app.run(debug=True)

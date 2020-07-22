@@ -1,6 +1,7 @@
 from flask import render_template, request, Blueprint
-from tapp import app, db, bcrypt, login_manager, mail 
+from tapp import db, bcrypt, login_manager, mail 
 from tapp.models import Post
+from flask import current_app as app 
 
 
 main = Blueprint('main', __name__ ) 
