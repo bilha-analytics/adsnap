@@ -68,9 +68,11 @@ def create_app(config_obj=Config):
     from tapp.main.routes import main 
     from tapp.users.routes import users 
     from tapp.posts.routes import posts 
+    from tapp.errors.handlers import errors 
 
-    app.register_blueprint( main  )
-    app.register_blueprint( users  )
-    app.register_blueprint( posts  )
+    app.register_blueprint( main )
+    app.register_blueprint( users )
+    app.register_blueprint( posts )
+    app.register_blueprint( errors )
 
     return app 
