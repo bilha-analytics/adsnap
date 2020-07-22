@@ -1,0 +1,75 @@
+{% extends "base_layout.html" %}
+
+{% block pagecontent %} 
+
+<!-- user infor -->
+{% set profile_pic = url_for( 'static', filename='profile_pics/'+user.img_file ) %}
+
+<div class="content-section">
+    <div class="media">
+        <img class="rounded-circle account-img" src="{{ profile_pic }} "> 
+
+        <div class="media-body">
+            <h2 class="account-heading">{{ user.uname }}</h2>
+            <p class="text-secondary"> {{ user.email }} </p>
+            <p class="text-secondary"> <b>{{ user.posts | length }}</b> Posts </p>
+        </div>
+    </div>
+</div>
+
+
+<!-- submitted posts TODO: order desc,  -->
+<div class="border-top mt-2">    
+    <!-- with pagination like in home page-->
+    {% if pages %}  
+        <div>
+        {% for item in pages.items %}
+           <article class="media content-section card-body">           
+               <div class="media-body">
+                   <h4><a class="article-title" href="{{ url_for('posts.view_post', post_id=item.id) }} ">{{ item.title }}</a></h4> 
+       
+                   <div class="article-metadata">
+                       {{ item.dated.strftime('%d-%b-%Y') }}
+                   </div>
+       
+                   <p class="article-content card-body">{{ item.content }} </p>
+               </div>
+           </article>
+        {% endfor %}
+        </div>
+       
+       <!-- pagination navitor -->
+       {% for pg_num in pages.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+           {% if pg_num %}
+               {% if pg_num == pages.page %}
+               <a href="{{ url_for('users.view_user', page=pg_num, uname=user.uname) }}" 
+                  class="btn btn-info mb-4"> {{ pg_num }} </a>        
+               {% else %}
+               <a href="{{ url_for('users.view_user', page=pg_num, uname=user.uname) }}" 
+                  class="btn btn-outline-info mb-4"> {{ pg_num }} </a>
+               {% endif %}
+           {% else %}
+             ... 
+           {% endif %}
+       {% endfor%}
+       
+
+    <!-- dumb list all -->
+    {% else %} 
+        {% for post in user.posts %}
+        <article class="media content-section">                
+            <div class="media-body">
+                <h4><a class="article-title" href="{{ url_for('posts.view_post', post_id=post.id) }} ">{{ post.title }}</a></h4> 
+
+                <div class="article-metadata">
+                    {{ post.dated.strftime('%d-%b-%Y') }}<br/> 
+                </div>
+
+                <p class="article-content">{{ post.content }} </p>
+            </div>
+        </article>
+        {% endfor %}
+
+    {% endif %}
+</div>
+{% endblock pagecontent %}

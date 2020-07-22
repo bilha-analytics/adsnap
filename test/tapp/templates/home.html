@@ -1,0 +1,46 @@
+{% extends "base_layout.html" %}
+
+{% block pagecontent %}
+<h1>{{ current_user.uname }} {{ body_content }}  </h1>
+
+{% if pages %}
+ <div>
+ {% for item in pages.items %}
+    <article class="media content-section card-body">    
+        {% set profile_pic = url_for( 'static', filename='profile_pics/'+item.author.img_file ) %}
+        <img class="rounded-circle article-img" src="{{ profile_pic }} "> 
+
+        <div class="media-body">
+            <h4><a class="article-title" href="{{ url_for('posts.view_post', post_id=item.id) }} ">{{ item.title }}</a></h4> 
+
+            <div class="article-metadata">
+                {{ item.dated.strftime('%d-%b-%Y') }}<br/>
+                <a class="mr-2" href="{{ url_for('users.view_user', user_id=item.author.id, uname=item.author.uname) }} "> {{ item.author.uname }}</a>
+                <small class="text-muted">{{ item.author.email }}</small>
+            </div>
+
+            <p class="article-content card-body">{{ item.content }} </p>
+        </div>
+    </article>
+ {% endfor %}
+    </div>
+{% endif %}
+
+<!-- pagination navitor -->
+{% for pg_num in pages.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if pg_num %}
+        {% if pg_num == pages.page %}
+        <a href="{{ url_for('main.home', page=pg_num) }}" 
+           class="btn btn-info mb-4"> {{ pg_num }} </a>        
+        {% else %}
+        <a href="{{ url_for('main.home', page=pg_num) }}" 
+           class="btn btn-outline-info mb-4"> {{ pg_num }} </a>
+        {% endif %}
+    {% else %}
+      ... 
+    {% endif %}
+{% endfor%}
+
+
+
+{% endblock pagecontent %}

@@ -1,0 +1,78 @@
+{% extends 'base_layout.html' %}
+
+{% block pagecontent %}
+<h1> {{ body_content }} </h1>
+
+<div>
+{% if zform %}
+<form method="POST" action="">
+    {{ zform.hidden_tag() }} <!-- for the csrf-etc protection -->
+
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4"> Join Today </legend>
+        <div class="form-group">
+            {{ zform.username.label(class='form-control-label') }}
+            {% if zform.username.errors %}
+                {{ zform.username(class='form-control form-control-lg is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in zform.username.errors %}
+                    <span> {{ error }} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ zform.username(class='form-control form-control-lg') }}
+            {% endif %}
+            
+        </div>
+        <div class="form-group">
+            {{ zform.email.label(class='form-control-label') }}
+            {% if zform.email.errors %}
+                {{ zform.email(class='form-control form-control-lg is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in zform.email.errors %}
+                    <span> {{ error }} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ zform.email(class='form-control form-control-lg') }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ zform.password.label(class='form-control-label') }}
+            {% if zform.password.errors %}
+                {{ zform.password(class='form-control form-control-lg is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in zform.password.errors %}
+                    <span> {{ error }} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ zform.password(class='form-control form-control-lg') }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ zform.confirm_password.label(class='form-control-label') }}
+            {% if zform.confirm_password.errors %}
+                {{ zform.confirm_password(class='form-control form-control-lg is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in zform.confirm_password.errors %}
+                    <span> {{ error }} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ zform.confirm_password(class='form-control form-control-lg') }}
+            {% endif %}
+        </div>
+    </fieldset>
+    <div class="form-group">
+        {{ zform.submit(class='btn btn-outline-info') }} 
+    </div>
+</form>
+{%endif%}
+<div class="border-top pt-3">
+    <small class="text-muted">
+        Already have an account? <a href="{{ url_for('users.login')}}"> Login </a>
+    </small>
+</div>
+</div>
+{% endblock pagecontent %}

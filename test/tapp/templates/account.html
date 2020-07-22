@@ -1,0 +1,75 @@
+{% extends "base_layout.html" %}
+
+{% block pagecontent %}
+<h1> {{ body_content }}: {{ current_user.uname}}</h1>
+
+<div class="content-section">
+    <div class="media">
+        <img class="rounded-circle account-img" src="{{ profile_pic }} "> 
+
+        <div class="media-body">
+            <h2 class="account-heading">{{ current_user.uname }}</h2>
+            <p class="text-secondary"> {{ current_user.email }} </p>   
+            <a class="btn btn-outline-primary" 
+                href="{{ url_for('users.request_reset')}}"> Change password </a>         
+        </div> 
+    </div>
+</div>
+
+
+
+<div>
+    {% if zform %}
+    <form method="POST" action="" enctype="multipart/form-data">
+        {{ zform.hidden_tag() }} <!-- for the csrf-etc protection -->
+    
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4"> Account Information</legend>
+            <div class="form-group">
+                {{ zform.username.label(class='form-control-label') }}
+                {% if zform.username.errors %}
+                    {{ zform.username(class='form-control form-control-lg is-invalid') }}
+                    <div class="invalid-feedback">
+                        {% for error in zform.username.errors %}
+                        <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ zform.username(class='form-control form-control-lg') }}
+                {% endif %}
+                
+            </div>
+            <div class="form-group">
+                {{ zform.email.label(class='form-control-label') }}
+                {% if zform.email.errors %}
+                    {{ zform.email(class='form-control form-control-lg is-invalid') }}
+                    <div class="invalid-feedback">
+                        {% for error in zform.email.errors %}
+                        <span> {{ error }} </span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ zform.email(class='form-control form-control-lg') }}
+                {% endif %}
+            </div>            
+
+            <div class="form-group">
+                {{ zform.profile_pic.label() }}
+                {{ zform.profile_pic(class="form-control-file")}}
+                {% if zform.profile_pic.errors %} 
+                        {% for error in zform.profile_pic.errors %}
+                        <span class="text-danger"> {{ error }} </span><br/> 
+                        {% endfor %}
+                {% endif%}
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            {{ zform.submit(class='btn btn-outline-info') }} 
+        </div>
+    </form>   
+
+    {%endif%}
+</div>
+
+{% endblock pagecontent %}

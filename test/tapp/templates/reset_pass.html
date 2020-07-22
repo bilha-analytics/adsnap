@@ -1,0 +1,36 @@
+{% extends 'base_layout.html' %}
+
+{% block pagecontent %} 
+<div> 
+
+<form method="POST" action="">
+    {{ zform.hidden_tag() }} <!-- for the csrf-etc protection -->
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4"> Request password reset </legend> 
+    {% set zform_fields = ['password', 'confirm_password'] %}
+
+    {% for zfield in zform_fields %}
+        <div class="form-group">
+            {% set zitem = zform|attr(zfield) %}
+
+            {{ zitem.label(class='form-control-label') }}
+            {% if zitem.errors %}
+                {{ zitem(class='form-control form-control-lg is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in zitem.errors %}
+                    <span> {{ error }} </span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ zitem(class='form-control form-control-lg') }}
+            {% endif %}
+        </div>
+    {% endfor %}
+    </fieldset>
+
+    <div class="form-group">
+        {{ zform.submit(class='btn btn-outline-info') }} 
+    </div>
+</form>
+</div>
+{% endblock pagecontent %}

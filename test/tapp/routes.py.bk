@@ -1,0 +1,259 @@
+# from flask import render_template, redirect, url_for, request, flash , abort 
+# from tapp import app, posts, db, bcrypt, login_manager, mail 
+# from tapp.forms import (RegistrationForm, LoginForm, UpdateAccountForm, 
+#                 PostForm, RequestResetPasswordForm, ResetPasswordForm)
+# from tapp.models import User, Post
+# from flask_login import login_user, logout_user, current_user, login_required
+# import secrets 
+# import os 
+# from PIL import Image
+# from flask_mail import Message 
+
+DPOSTS = None
+# @app.route('/')
+# @app.route('/home')
+# def home(): 
+#     # global DPOSTS
+#     # if not DPOSTS:
+#     #     DPOSTS = Post.query.order_by( Post.dated.desc() ) 
+
+#     # posts = Post.query.order_by( Post.id.desc() ).all()
+#     page = request.args.get('page', 1, type=int)
+#     posts = Post.query.order_by( Post.dated.desc() ).paginate(page=page, per_page=2) #.order_by( Post.id.desc() ) #.all()
+#     return render_template('home.html', body_content='Welcome Home!', pages=posts)
+
+
+# # @app.route('/logout' )
+# # def logout():
+# #     logout_user() 
+# #     return redirect( url_for('login') ) 
+
+
+# @app.route('/about' )
+# def about():
+#     return render_template('about.html', body_content='About Here')
+
+# ## save uploaded file. use random hex as filename 
+# # resize using PIL
+# def save_profile_pic(form_pic):
+#     rand_hex = secrets.token_hex(8) 
+#     _, file_ext = os.path.splitext( form_pic.filename )  
+#     f_name = f"{rand_hex}{file_ext}"
+#     print( f_name )
+#     f_path = os.path.join( app.root_path, 'static/profile_pics', f_name) 
+#     print( f_path )
+
+
+#     fsize = (125, 125)
+#     img = Image.open( form_pic) 
+#     img.thumbnail( fsize )
+#     #form_pic.save( f_path )
+#     img.save( f_path )
+
+#     return f_name
+
+# @app.route('/account',  methods=['GET', 'POST'])
+# @login_required 
+# def account():
+#     form = UpdateAccountForm()
+#     if form.validate_on_submit():
+#         current_user.uname = form.username.data
+#         current_user.email = form.email.data
+
+#         if form.profile_pic.data:
+#             current_user.img_file = save_profile_pic( form.profile_pic.data ) 
+
+#         db.session.commit() 
+#         flash( f"Your account has been updated", 'success')
+#         return( redirect(url_for('account') ) ) 
+
+#     elif request.method == 'GET':
+#         form.username.data = current_user.uname
+#         form.email.data = current_user.email 
+
+#     profile_pic = url_for('static', filename='profile_pics/'+current_user.img_file ) 
+
+#     return render_template('account.html', body_content='Account Details', 
+#                             profile_pic=profile_pic, zform=form) 
+
+
+
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if current_user.is_authenticated:
+#         return redirect( url_for('home') )
+
+#     form = RegistrationForm() 
+#     if request.method == 'POST' and form.validate_on_submit():
+#         hashed_pass = bcrypt.generate_password_hash( form.password.data ).decode('utf-8' )
+#         user = User(uname=form.username.data, email=form.email.data, upass=hashed_pass)
+#         db.session.add(user)
+#         db.session.commit() 
+#         flash( f'Registration successful! Welcome {form.username.data}. You may now login', 'success')
+#         return redirect( url_for('login') )
+#     return render_template('register.html', body_content='Register', zform=form)
+
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():    
+#     if current_user.is_authenticated:
+#         return redirect( url_for('home') )
+
+#     form = LoginForm() 
+#     if request.method == 'POST' and form.validate_on_submit():
+#         user = User.query.filter_by(email=form.email.data).first()
+#         if user and bcrypt.check_password_hash( user.upass, form.password.data ):
+#             login_user(user, remember=form.remember.data )
+#             next_page = request.args.get('next') 
+#             flash(f"Welcome back {user.uname}" , 'success')
+#             return  redirect( next_page) if next_page else redirect(('home') ) 
+#         else:
+#             flash(f"Login Failed. Check email and password", 'danger')
+
+#     msg = request.args.get('reset_msg')
+#     return render_template('login.html', body_content='Login', zform=form, reset_msg=msg) 
+
+
+# ### --- CRUD @ Post ---- 
+
+# @app.route('/post/new',  methods=['GET', 'POST'])
+# @login_required 
+# def new_post():
+#     form = PostForm()
+#     if form.validate_on_submit(): 
+#         post = Post( title=form.title.data, content=form.content.data, author_id=current_user.id )  ##or author=current_user
+#         db.session.add( post )
+#         db.session.commit()
+#         flash( f"Post created successfully!", 'success' )
+#         return redirect( url_for('home') ) 
+#     return render_template('create_post.html', title='New Post', zform=form , legend='New Post') 
+
+# @app.route('/post/<int:post_id>')
+# def view_post(post_id): 
+#     #post = Post.query.get( post_id )
+#     post = Post.query.get_or_404( post_id )
+#     return render_template( 'post.html', title=post.title, post=post) 
+
+
+# @app.route('/post/<int:post_id>/update',  methods=['GET', 'POST'])
+# @login_required 
+# def update_post(post_id):
+#     post = Post.query.get_or_404( post_id ) 
+
+#     if post.author != current_user: ## ensure only the owner can edit or del 
+#         abort(403) 
+
+#     form = PostForm()
+
+#     if request.method == 'GET': #necessary to avoid confusion with POST entries 
+#         form.title.data = post.title 
+#         form.content.data = post.content  
+
+#     if form.validate_on_submit(): 
+#         post.title = form.title.data 
+#         post.content = form.content.data 
+#         db.session.commit()
+#         flash( f"Post updated successfully!", 'success' )
+#         return redirect( url_for('view_post', post_id=post.id) )  
+
+#     return render_template('create_post.html', title='Update Post', 
+#                 zform=form , legend='Update Post') 
+
+
+# @app.route('/post/<int:post_id>/delete',  methods=[ 'POST'])
+# @login_required 
+# def delete_post(post_id):
+
+#     post = Post.query.get_or_404( post_id ) 
+
+#     if post.author != current_user: ## ensure only the owner can edit or del 
+#         abort(403) 
+
+#     db.session.delete( post ) 
+#     db.session.commit()
+    
+#     flash( f"Post deleted successfully!", 'success' )
+    
+#     return redirect( url_for('home') ) 
+
+
+# #### additional CRUD user
+# @app.route('/user/<int:user_id>')
+# def view_user2(user_id): 
+#     user = User.query.get_or_404( user_id )
+#     return render_template( 'user.html', title=user.uname, user=user) 
+
+
+# @app.route('/user/<string:uname>')
+# def view_user(uname): 
+#     page = request.args.get('page', 1, type=int)
+#     user = User.query.filter_by(uname=uname).first_or_404() 
+#     posts = Post.query.filter_by(author=user)\
+#            .order_by( Post.dated.desc() )\
+#            .paginate(page=page, per_page=2)
+#     return render_template( 'user.html', title=user.uname, user=user, pages=posts) 
+
+
+# #### password reset 
+# def send_reset_email(user):
+#     token = user.get_reset_pass_token( 60 ) 
+#     msg = Message('Password Reset Request', 
+#             sender='noreply@goat.com',
+#             recipients=[user.email, 'bitzcodie@gmail.com'] )
+#     msg.body = f'''
+# To: {user.email}
+# Re: Password Reset
+
+# Dear {user.uname},
+
+# To reset your password , visit the following link:
+#     {url_for('reset_pass', token=token, _external=True)}
+
+# If you did not make this request, please ignore this email and no change will be made. 
+#         '''
+
+#     print( app.config['MAIL_USERNAME'])
+#     print( app.config['MAIL_PASSWORD'] )
+#     #mail.send( msg ) 
+#     return msg.body 
+
+
+# @app.route('/reset_pass',  methods=['GET', 'POST'])
+# def request_reset():
+#     if current_user.is_authenticated:
+#         # return redirect(url_for('home'))
+#         msg = send_reset_email(current_user)
+#         logout_user() 
+#         return redirect( url_for('login', reset_msg=msg) ) 
+
+#     form = RequestResetPasswordForm()
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(email=form.email.data ).first()
+#         msg = send_reset_email(user)
+#         flash(f"Check your email for reset instructions", 'success') 
+#         return redirect( url_for('login', reset_msg=msg) ) 
+
+#     return render_template('request_reset.html', title='Request Password Reset', zform=form) 
+
+
+
+# @app.route('/reset_pass/<token>',  methods=['GET', 'POST'])
+# def reset_pass(token):
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('home'))
+
+    # user = User.verify_reset_pass_token(token)
+
+    # if user is None:
+    #     flash( f"Invalid or Expired token", 'warning')
+    #     return redirect( url_for('request_reset') ) 
+
+    # form = ResetPasswordForm() 
+    # if request.method == 'POST' and form.validate_on_submit():
+    #     hashed_pass = bcrypt.generate_password_hash( form.password.data ).decode('utf-8' ) 
+    #     user.upass = hashed_pass 
+    #     db.session.commit() 
+    #     flash( f'Your password has been updated. You may now login', 'success')
+    #     return redirect( url_for('login') )
+
+    # return render_template('reset_pass.html', title='Request Password Reset', zform=form) 

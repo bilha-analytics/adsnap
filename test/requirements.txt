@@ -1,0 +1,9 @@
+flask
+Flask-WTF
+email-validator
+flask-sqlalchemy
+flask-bcrypt
+flask-login
+pillow
+itsdangerous #included in flask. Generate timed tokens
+flask-mail
